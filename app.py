@@ -15,6 +15,9 @@ df['combined_text'] = df['title'].fillna('') + ' ' + df['Single_Label'].fillna('
 tfidf_vectorizer = TfidfVectorizer()
 tfidf_matrix_combined = tfidf_vectorizer.fit_transform(df['combined_text'].astype(str))
 
+# Set to store unique titles
+unique_titles = set()
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -27,7 +30,6 @@ def recommend():
     cosine_similarities = cosine_similarity(partial_input_vector, tfidf_matrix_combined)
     similar_books_indices = cosine_similarities.argsort()[0][-25:][::-1]
 
-    unique_titles = set()
     recommendations = []
     for idx in similar_books_indices:
         book_id = df.loc[idx, 'idbook']
